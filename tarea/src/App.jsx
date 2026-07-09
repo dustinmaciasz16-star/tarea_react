@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function Peliculas({ texto }) {
@@ -14,8 +14,25 @@ function Peliculas({ texto }) {
 }
 
 function App() {
-  const [peliculasList, setPeliculasList] = useState([]);
+  //Con esto, cuando abra la página, primero intentará leer las películas guardadas.
+  const [peliculasList, setPeliculasList] = useState(() => {
+    const peliculasGuardadas = localStorage.getItem("peliculas");
+
+    return peliculasGuardadas
+      ? JSON.parse(peliculasGuardadas)
+      : [];
+  });
+  
   const [peliculaNueva, setPeliculaNueva] = useState('');
+
+  //Cada vez que peliculasList cambie, React actualizará el Local Storage.
+  useEffect(() => {
+    localStorage.setItem(
+      "peliculas",
+      JSON.stringify(peliculasList)
+    );
+  }, [peliculasList]);
+
   return (
     <div className="app">
       <h1>Lista de peliculas</h1>
